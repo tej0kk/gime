@@ -1,0 +1,81 @@
+
+game
+name : String,
+price : Number,    
+description : String,
+recommendation: Boolean,
+onsale: Boolean,
+freegame: Boolean,
+cover: String,
+trailer: String,
+special_offer: Boolean,
+
+specPC
+os: String,
+processor: String,
+memory: String,
+graphic: String,
+category:String, 
+{
+     Enum ['min','req']
+}
+game: [objectId]
+
+about
+corporateName : String,
+location: String,
+description: String,
+address: String,
+phone: String
+
+user
+fullName: String,
+phone: String,
+email: String,
+password: String,
+username: String
+
+news
+title: String,
+publishDate: Date,
+content: String,
+popular: Boolean,
+image: String,
+
+feature
+featureName: String,
+image: String,
+description: String
+
+faq
+question: String,
+answer: String
+
+carousel
+coverSlide: String,
+title: String,
+description: String  
+
+cart
+qty: Number,
+game: [ objectId ]
+
+library
+user: [objectId],
+cart: [objectId]
+
+billing
+game: [objectId],
+user: [objectId],
+cart: [objectId],
+paymentMethod: [objectId],
+qrCode: String,
+paymentStatus: String,
+{ 
+   Enum: ['paid', 'unpaid']
+}
+qrCode: String,
+
+paymentMethod
+name: String,
+paymentSteps: String

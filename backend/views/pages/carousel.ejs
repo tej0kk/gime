@@ -1,0 +1,184 @@
+<%- include('../components/header.ejs') %>
+
+    <div class="container-fluid">
+        <!-- Page Heading -->
+        <h1 class="h3 mb-2 text-gray-800">Carousel</h1>
+
+        <!-- DataTales Example -->
+        <div class="row-12">
+            <% if(alert.message != ""){ %>
+                <div class="alert alert-<%= alert.status %>" role="alert">
+                    <%- alert.status == "success" ? 
+                    `<i class="fas fa-check-square mr-2"></i>` : 
+                    `<i class="fas fa-exclamation-triangle mr-2"></i>` 
+                    %>
+                    <%= alert.message %>
+                </div>
+            <% } %>
+        </div>
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#tambahModal">
+                    Tambah Data
+                </button>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Image</th>
+                                <th>Title</th>
+                                <th>Description</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% for (let i=0; i<carousel.length; i++) {%>
+                                <tr>
+                                    <td><%= i+1 %></td>
+                                    <td>
+                                        <img src="/images/<%= carousel[i].coverSlide %>" alt="<%= carousel[i].coverSlide %>" width="250vh">
+                                        
+                                    </td>
+                                    <td><%= carousel[i].title %></td>
+                                    <td><%= carousel[i].description %></td>
+                                    <td>
+                                        <button type="button" class="btn btn-warning btn-sm button-edit"
+                                        data-title="<%= carousel[i].title %>"
+                                        data-description="<%= carousel[i].description %>"
+                                        data-image="<%= carousel[i].image %>"
+                                        data-id="<%= carousel[i]._id %>"
+                                        >
+                                            edit
+                                        </button>
+                                        <button type="button" class="btn btn-danger btn-sm button-hapus"
+                                        data-id="<%= carousel[i]._id %>"
+                                        >
+                                            hapus
+                                        </button>
+                                    </td>
+                                </tr>
+                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Tambah-->
+    <div class="modal fade" id="tambahModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Tambah Carousel</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form action="/carousel" method="POST" enctype="multipart/form-data">
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="title">Title</label>
+                            <input type="text" class="form-control" id="title" name="title" placeholder="Masukkan Title carousel...">
+                        </div>
+                        <div class="form-group">
+                            <label for="description">description</label>
+                            <textarea class="form-control" id="description" name="description" placeholder="Masukkan description carousel..." rows="5"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="image">Image</label>
+                            <input type="file" class="form-control" id="image" name="image" placeholder="Masukkan Image carousel...">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Edit-->
+    <div class="modal fade" id="editModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Edit Carousel</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form method="post" action="/carousel?_method=PUT" enctype="multipart/form-data">
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="title">Title</label>
+                            <input type="text" class="form-control title" id="title" name="title" placeholder="Masukkan Title carousel...">
+                        </div>
+                        <div class="form-group">
+                            <label for="description">description</label>
+                            <textarea class="form-control description" id="description" name="description" placeholder="Masukkan description carousel..." rows="5"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="image">Image</label>
+                            <input type="file" class="form-control image" id="image" name="image" placeholder="Masukkan Image carousel...">
+                        </div>
+                        <input class="id" type="hidden" name="id">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Hapus-->
+    <div class="modal fade" id="hapusModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Hapus Carousel</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form class="form-hapus" method="post">
+                    <div class="modal-body">
+                        <h3>Apakah saya yakin ?</h3>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+<script>
+    $('#dataTable').on('click', '.button-edit', function(){
+        $('#editModal').modal('show');
+        let title = $(this).data('title');
+        let description = $(this).data('description');
+        let id = $(this).data('id');
+
+        $('.title').val(title);
+        $('.description').val(description);
+        $('.id').val(id);
+    });
+
+    $('#dataTable').on('click', '.button-hapus', function(){
+        $('#hapusModal').modal('show');
+        let id = $(this).data('id');
+        let url = `/carousel/${id}?_method=DELETE`;
+        $('.form-hapus').attr('action',url);
+        return false;
+    });
+</script>
+
+<%- include('../components/bottom.ejs') %>

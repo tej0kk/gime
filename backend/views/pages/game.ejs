@@ -1,0 +1,240 @@
+<%- include('../components/header.ejs') %>
+
+    <div class="container-fluid">
+        <h1 class="h3 mb-4 text-gray-800">Game Page</h1>
+        <div class="row-12">
+            <% if(alert.message != ""){ %>
+                <div class="alert alert-<%= alert.status %>" role="alert">
+                    <%- alert.status == "success" ? 
+                    `<i class="fas fa-check-square mr-2"></i>` : 
+                    `<i class="fas fa-exclamation-triangle mr-2"></i>` 
+                    %>
+                    <%= alert.message %>
+                </div>
+            <% } %>
+        </div>
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#tambahModal">
+                    Tambah Data
+                </button>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Name</th>
+                                <th>Price</th>
+                                <th>Desc</th>
+                                <th>Cover</th>
+                                <th>Trailer</th>
+                                <th>Recommendation</th>
+                                <th>Free</th>
+                                <th>Sale</th>
+                                <th>Special</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% for (let i=0; i<games.length; i++) {%>
+                                <tr>
+                                    <td><%= i+1 %></td>
+                                    <td><%= games[i].name %></td>
+                                    <td><%= games[i].price %></td>
+                                    <td><%= games[i].description %></td>
+                                    <td>
+                                        <img src="/images/<%= games[i].cover %>" alt="<%= games[i].cover %>" width="250vh">
+                                        
+                                    </td>
+                                    <td><%= games[i].trailer %></td>
+                                    <td><%= games[i].isRecommendation %></td>
+                                    <td><%= games[i].isFree %></td>
+                                    <td><%= games[i].isOnSale %></td>
+                                    <td><%= games[i].isSpecialOffer %></td>
+                                    <td>
+                                        <button type="button" class="btn btn-warning btn-sm button-edit">
+                                            edit
+                                        </button>
+                                        <button type="button" class="btn btn-danger btn-sm button-hapus"
+                                        data-id="<%= games[i]._id %>">
+                                            hapus
+                                        </button>
+                                    </td>
+                                </tr>
+                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Tambah-->
+    <div class="modal fade" id="tambahModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Tambah News</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form action="/game" method="POST" enctype="multipart/form-data">
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="title">Name</label>
+                            <input type="text" class="form-control" id="name" name="name" placeholder="Masukkan Nama Game...">
+                        </div>
+                        <div class="form-group">
+                            <label for="price">Price</label>
+                            <input type="number" class="form-control" id="price" name="price" placeholder="Masukkan Harga Game...">
+                        </div>
+                        <div class="form-group">
+                            <label for="description">Description</label>
+                            <textarea class="form-control" id="description" name="description" placeholder="Masukkan Content News..." rows="5"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="cover">Cover</label>
+                            <input type="file" class="form-control" id="cover" name="image" placeholder="Masukkan Image News...">
+                        </div>
+                        <div class="form-group">
+                            <label for="trailer">Trailer</label>
+                            <input type="text" class="form-control" id="trailer" name="trailer" placeholder="Masukkan Nama Game...">
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="is-recomendation">is Recomendation?</label>
+                                    <select class="form-control" id="is-recomendation" name="isRecomendation">
+                                        <option value="">--Pilih Satu--</option>
+                                        <option value="true">Ya</option>
+                                        <option value="false">Tidak</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="is-free">is Free?</label>
+                                    <select class="form-control" id="is-free" name="isFree">
+                                        <option value="">--Pilih Satu--</option>
+                                        <option value="true">Ya</option>
+                                        <option value="false">Tidak</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="is-onSale">is OnSale?</label>
+                                    <select class="form-control" id="is-onSale" name="isOnSale">
+                                        <option value="">--Pilih Satu--</option>
+                                        <option value="true">Ya</option>
+                                        <option value="false">Tidak</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="is-specialOffer">is SpecialOffer?</label>
+                                    <select class="form-control" id="is-specialOffer" name="isSpecialOffer">
+                                        <option value="">--Pilih Satu--</option>
+                                        <option value="true">Ya</option>
+                                        <option value="false">Tidak</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <hr class="my-3">
+                                <div class="row d-flex justify-content-start">
+                                    <h5>Minimum Specification</h5>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <label for="os">OS</label>
+                                            <select class="form-control" id="os" name="min_os">
+                                                <option value="">--Pilih Satu--</option>
+                                                <option value="Windows">Windows</option>
+                                                <option value="Linux">Linux</option>
+                                                <option value="Mac">Mac</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <label for="processor">Processor</label>
+                                            <input class="form-control" type="text" name="min_processor" placeholder="Processor">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <label for="memory">Memory (GB)</label>
+                                            <input class="form-control" type="number" min="0" name="min_memory" placeholder="memory">
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <label for="graphic">Graphic</label>
+                                            <input class="form-control" type="text" name="min_graphic" placeholder="graphic">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <hr class="my-3">
+                                <div class="row d-flex justify-content-start">
+                                    <h5>Requirement Specification</h5>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <label for="os">OS</label>
+                                            <select class="form-control" id="os" name="req_os">
+                                                <option value="">--Pilih Satu--</option>
+                                                <option value="Windows">Windows</option>
+                                                <option value="Linux">Linux</option>
+                                                <option value="Mac">Mac</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <label for="processor">Processor</label>
+                                            <input class="form-control" type="text" name="req_processor" placeholder="Processor">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <label for="memory">Memory (GB)</label>
+                                            <input class="form-control" type="number" min="0" name="req_memory" placeholder="memory">
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <label for="graphic">Graphic</label>
+                                            <input class="form-control" type="text" name="req_graphic" placeholder="graphic">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+<%- include('../components/bottom.ejs') %>

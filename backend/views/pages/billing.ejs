@@ -1,0 +1,129 @@
+<%- include('../components/header.ejs') %>
+
+    <div class="container-fluid">
+        <!-- Page Heading -->
+        <h1 class="h3 mb-2 text-gray-800">Billing</h1>
+
+        <!-- DataTales Example -->
+        <div class="row-12">
+            <% if(alert.message != ""){ %>
+                <div class="alert alert-<%= alert.status %>" role="alert">
+                    <%- alert.status == "success" ? 
+                    `<i class="fas fa-check-square mr-2"></i>` : 
+                    `<i class="fas fa-exclamation-triangle mr-2"></i>` 
+                    %>
+                    <%= alert.message %>
+                </div>
+            <% } %>
+        </div>
+        <div class="card shadow mb-4">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Game</th>
+                                <th>Pembeli</th>
+                                <th>Payment</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% for (let i=0; i<billing.length; i++) {%>
+                                <tr>
+                                    <td><%= i+1 %></td>
+                                    <td><%= billing[i].gameId.name %></td>
+                                    <td><%= billing[i].userId.username %></td>
+                                    <td><%= billing[i].paymentId.name %></td>
+                                    <td><%= billing[i].status %></td>
+                                    <td>
+                                        <button type="button" class="btn btn-success btn-sm button-status"
+                                        data-id="<%= billing[i]._id %>"
+                                        >
+                                            Status
+                                        </button>
+                                        <button type="button" class="btn btn-danger btn-sm button-hapus"
+                                        data-id="<%= billing[i]._id %>"
+                                        >
+                                            Hapus
+                                        </button>
+                                    </td>
+                                </tr>
+                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal status-->
+    <div class="modal fade" id="statusModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Status Billing</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row d-flex justify-content-center">
+                        <h3>Apakah saya yakin ?</h3>
+                    </div>
+                    <div class="row d-flex justify-content-center mt-5">
+                        <p class="text-center">Pastikan pembayaran telah benar, game akan diteruskan kepada pembeli jika anda menekan tombol YA !</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Tidak</button>
+                    <a type="button" class="btn btn-primary button-ya">YA</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Hapus-->
+    <div class="modal fade" id="hapusModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Hapus Billing</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form class="form-hapus" method="post">
+                    <div class="modal-body">
+                        <h3>Apakah saya yakin ?</h3>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+<script>
+    $('#dataTable').on('click', '.button-hapus', function(){
+        $('#hapusModal').modal('show');
+        let id = $(this).data('id');
+        let url = `/billing/${id}?_method=DELETE`;
+        $('.form-hapus').attr('action',url);
+        return false;
+    });
+
+    $('#dataTable').on('click', '.button-status', function(){
+        $('#statusModal').modal('show');
+        let id = $(this).data('id');
+        let url = `/billing/status/${id}`;
+        $('.button-ya').attr('href',url);
+        return false;
+    });
+</script>
+
+<%- include('../components/bottom.ejs') %>
