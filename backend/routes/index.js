@@ -23,7 +23,7 @@ router.post('/login', UserController.prosesLogin);
 //----------------------------------------
 
 
-router.use(isLogin);
+// router.use(isLogin);
 
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });

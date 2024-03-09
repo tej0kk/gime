@@ -1,4 +1,4 @@
-import { Container, Col, Row, FormControl, FormLabel, Form, Button } from "react-bootstrap";
+import { Container, Col, Row, FormControl, FormLabel, Form, Button, Alert } from "react-bootstrap";
 import Footer from "../components/Footer";
 import NavbarComp from "../components/NavbarComp";
 import { useState } from "react";
@@ -12,11 +12,46 @@ const SignupPage = () => {
     const [phone, setPhone] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setconfirmPassword] = useState('');
+    const [errorFullname, setErrorFullname] = useState('');
+    const [errorUsername, setErrorUsername] = useState('');
+    const [errorEmail, setErrorEmail] = useState('');
+    const [errorPhone, setErrorPhone] = useState('');
+    const [errorPassword, setErrorPassword] = useState('');
+    const [errorConfirmPassword, setErrorConfirmPassword] = useState('');
+
     const navigate = useNavigate();
 
     const register = async (e) => 
-    {
+    {   
         e.preventDefault();
+        if (fullname.length < 8) {
+            setErrorFullname('Silahkan masukkan nama anda !');
+            return;
+        } 
+        else if (username.length < 8) {
+            setErrorUsername('Silahkan masukkan nama pengguna anda !');
+            return;
+        }
+        else if (email.length < 8) {
+            setErrorEmail('Silahkan masukkan email anda !');
+            return;
+        }
+        else if (phone.length < 11) {
+            setErrorPhone('Silahkan masukkan nomor HP anda !');
+            return;
+        }
+        else if (password.length < 8) {
+            setErrorPassword('Silahkan masukkan password anda !');
+            return;
+        }
+        else if (confirmPassword.length < 8) {
+            setErrorConfirmPassword('Silahkan masukkan password anda !');
+            return;
+        }
+        else if (confirmPassword != password) {
+            setErrorConfirmPassword('Konfirmasi password tidak sesuai !');
+            return;
+        }
         try {
             const data = {
                 fullName: fullname,
@@ -33,6 +68,54 @@ const SignupPage = () => {
         }
     }
 
+    const alert = () => 
+    {
+        if (fullname.length < 8) {
+            return (
+                <Alert variant="danger">
+                    {errorFullname}
+                </Alert>
+            );
+        }else if (username.length < 8) {
+            return (
+                <Alert variant="danger">
+                    {errorUsername}
+                </Alert>
+            );
+        }else if (phone.length < 11) {
+            return (
+                <Alert variant="danger">
+                    {errorPhone}
+                </Alert>
+            );
+        }else if (email.length < 8) {
+            return (
+                <Alert variant="danger">
+                    {errorEmail}
+                </Alert>
+            );
+        }else if (password.length < 8) {
+            return (
+                <Alert variant="danger">
+                    {errorPassword}
+                </Alert>
+            );
+        }else if (confirmPassword.length < 8) {
+            return (
+                <Alert variant="danger">
+                    {errorConfirmPassword}
+                </Alert>
+            );
+        }else if (confirmPassword != password) {
+            return (
+                <Alert variant="danger">
+                    {errorConfirmPassword}
+                </Alert>
+            );
+        }
+    }
+    
+
     return (
         <div>
             <NavbarComp />
@@ -43,11 +126,14 @@ const SignupPage = () => {
                             <div className="bg-signup bg-dark" data-bs-theme="dark">
                                 <h5>Sign Up</h5>
                                 <p>Make an account to find the joy!</p>
+                                <Row>
+                                    {alert()}
+                                </Row>
                                 <Form onSubmit={register}>
                                     <Row>
                                         <Col lg={6}>
                                             <FormLabel htmlFor="fullname"><b>Fullname</b></FormLabel>
-                                            <FormControl type="text" className="mb-3" data-bs-theme="dark" value={fullname} onChange={(e) => setFullname(e.target.value)}/>
+                                            <FormControl type="text" className="mb-3" data-bs-theme="dark" value={fullname} onChange={(e) => setFullname(e.target.value)} />
                                         </Col>
                                         <Col lg={6}>
                                             <FormLabel htmlFor="username"><b>Username</b></FormLabel>

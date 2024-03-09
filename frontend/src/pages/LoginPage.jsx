@@ -4,11 +4,13 @@ import { Col, Container, Form, FormControl, FormLabel, Row, Button, Alert } from
 import { useState } from "react";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
+import { useNavigate } from "react-router-dom";
 
 const LoginPage = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [msg, setMsg] = useState('');
+    const navigate = useNavigate();
 
     const masuk = async (e) => 
     {
@@ -20,7 +22,9 @@ const LoginPage = () => {
             };
             const res = await axios.post('http://127.0.0.1:3000/api/login', data);
             const decode = jwtDecode(res.data.token);
-            console.log(decode);
+            localStorage.setItem('token', res.data.token);
+            navigate('/');
+            // console.log(decode);
         } catch (error) {
             if (error.response) {
                 setMsg(error.response.data.message);

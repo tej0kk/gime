@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Nav, Container, Row, Col, Form, Carousel, Image, Card } from 'react-bootstrap';
 
 // import component
@@ -8,9 +8,37 @@ import Footer from '../components/Footer';
 import FreeGame from '../components/FreeGame';
 import OnSale from '../components/OnSale';
 
+import axios from 'axios';
+
 const Home = () => {
     const [activeKey, setActiveKey] = useState('discover');
     const [index, setIndex] = useState(0);
+    const [datasCarousel, setDatasCarousel] = useState([]);
+    const [datasFeature, setDatasFeature] = useState([]);
+
+    useEffect(() => {
+        getDataCarousel();
+        getDataFeature();
+    }, []);
+
+    const getDataCarousel = async () => {
+        try {
+            const response = await axios.get('http://127.0.0.1:3000/api/carousel');
+            setDatasCarousel(await response.data.carousel);
+            // console.log(datas);
+        } catch (error) {
+            console.log(error.message);
+        }
+    }
+    const getDataFeature = async () => {
+        try {
+            const response = await axios.get('http://127.0.0.1:3000/api/feature');
+            setDatasFeature(await response.data.feature);
+            // console.log(datas);
+        } catch (error) {
+            console.log(error.message);
+        }
+    }
 
     const handleSelect = (selectedKey) => {
         setActiveKey(selectedKey);
@@ -26,42 +54,22 @@ const Home = () => {
                 <div id='hero'>
                     <Row>
                         <Carousel className='mt-5' activeIndex={index} onSelect={handleCarouselSelect}>
-                            <Carousel.Item>
-                                <Image
-                                    className="d-block w-100"
-                                    src="../src/assets/slide1.png"
-                                    alt="First slide"
-                                />
-                                <Carousel.Caption>
-                                    <h5><b>Hitman III : Death Awaits</b></h5>
-                                    <p>Lorem ipsum dolor sit, amet consectetur adipisicing.</p>
-                                    <a href="/DetailPage" class="btn btn-outline-light">Buy Now!</a>
-                                </Carousel.Caption>
-                            </Carousel.Item>
-                            <Carousel.Item>
-                                <Image
-                                    className="d-block w-100"
-                                    src="../src/assets/slide2.png"
-                                    alt="Second slide"
-                                />
-                                <Carousel.Caption>
-                                    <h5><b>Forza Horizon 5</b></h5>
-                                    <p>Lorem ipsum dolor sit, amet consectetur adipisicing.</p>
-                                    <a href="/DetailPage" class="btn btn-outline-light">Buy Now!</a>
-                                </Carousel.Caption>
-                            </Carousel.Item>
-                            <Carousel.Item>
-                                <Image
-                                    className="d-block w-100"
-                                    src="../src/assets/slide3.png"
-                                    alt="Third slide"
-                                />
-                                <Carousel.Caption>
-                                    <h5><b>EA Sport : FC 24</b></h5>
-                                    <p>Lorem ipsum dolor sit, amet consectetur adipisicing.</p>
-                                    <a href="/DetailPage" class="btn btn-outline-light">Buy Now!</a>
-                                </Carousel.Caption>
-                            </Carousel.Item>
+                            {
+                                datasCarousel.map((data, index) => (
+                                    <Carousel.Item key={index}>
+                                        <Image
+                                            className="d-block w-100"
+                                            src={`http://127.0.0.1:3000/images/${data.coverSlide}`}
+                                            alt="First slide"
+                                        />
+                                        <Carousel.Caption>
+                                            <h5><b>{data.title}</b></h5>
+                                            <p>{data.description }</p>
+                                            <a href="/DetailPage" className="btn btn-outline-light">Buy Now!</a>
+                                        </Carousel.Caption>
+                                    </Carousel.Item>
+                                ))
+                            }
                         </Carousel>
                     </Row>
 
@@ -74,57 +82,26 @@ const Home = () => {
                     </Row>
 
                     <Row className='mt-5'>
-                        <Col lg={4}>
-                            <Card style={{ width: '100%' }} data-bs-theme="dark">
-                                <Card.Img variant="top" src="../src/assets/image11.png" className='card-image' />
-                                <Card.Body>
-                                    <a href="/SalesPage">
-                                        <h5 className="card-title">Sales & Special</h5>
-                                    </a>
-                                    <p className="card-text">
-                                        Lorem ipsum dolor sit amet consectetur adipisicing
-                                        elit. Nesciunt, minima?
-                                    </p>
-                                    <a href="./SalesPage">
-                                        <h4>Browse</h4>
-                                    </a>
-                                </Card.Body>
-                            </Card>
-                        </Col>
-                        <Col lg={4}>
-                            <Card style={{ width: '100%' }} data-bs-theme="dark">
-                                <Card.Img variant="top" src="../src/assets/image12.png" className='card-image' />
-                                <Card.Body>
-                                    <a href="/SalesPage">
-                                        <h5 className="card-title">Free Games</h5>
-                                    </a>
-                                    <p className="card-text">
-                                        Lorem ipsum dolor sit amet consectetur adipisicing
-                                        elit. Nesciunt, minima?
-                                    </p>
-                                    <a href="./SalesPage">
-                                        <h4>Play Now</h4>
-                                    </a>
-                                </Card.Body>
-                            </Card>
-                        </Col>
-                        <Col lg={4}>
-                            <Card style={{ width: '100%' }} data-bs-theme="dark">
-                                <Card.Img variant="top" src="../src/assets/image13.png" className='card-image' />
-                                <Card.Body>
-                                    <a href="/SalesPage">
-                                        <h5 className="card-title">Game News</h5>
-                                    </a>
-                                    <p className="card-text">
-                                        Lorem ipsum dolor sit amet consectetur adipisicing
-                                        elit. Nesciunt, minima?
-                                    </p>
-                                    <a href="./SalesPage">
-                                        <h4>Browse</h4>
-                                    </a>
-                                </Card.Body>
-                            </Card>
-                        </Col>
+                        {
+                            datasFeature.map((data,index) => (
+                                <Col key={index} lg={4}>
+                                    <Card style={{ width: '100%' }} data-bs-theme="dark">
+                                        <Card.Img variant="top" src={`http://127.0.0.1:3000/images/${data.image}`} className='card-image' />
+                                        <Card.Body>
+                                            <a href="/SalesPage">
+                                                <h5 className="card-title">{ data.featureName }</h5>
+                                            </a>
+                                            <p className="card-text">
+                                                {data.description}
+                                            </p>
+                                            <a href="./SalesPage">
+                                                <h4>Browse</h4>
+                                            </a>
+                                        </Card.Body>
+                                    </Card>
+                                </Col>   
+                            ))
+                        }
                     </Row>
                 </div>
             );
