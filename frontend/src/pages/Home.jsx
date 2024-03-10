@@ -25,16 +25,15 @@ const Home = () => {
         try {
             const response = await axios.get('http://127.0.0.1:3000/api/carousel');
             setDatasCarousel(await response.data.carousel);
-            // console.log(datas);
         } catch (error) {
             console.log(error.message);
         }
     }
+
     const getDataFeature = async () => {
         try {
             const response = await axios.get('http://127.0.0.1:3000/api/feature');
             setDatasFeature(await response.data.feature);
-            // console.log(datas);
         } catch (error) {
             console.log(error.message);
         }

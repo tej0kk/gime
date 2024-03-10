@@ -1,16 +1,85 @@
 import Footer from "../components/Footer";
 
-import { Container, Row, Col, Breadcrumb, Card, CardBody, Form, FormLabel, FormControl, FormCheck } from "react-bootstrap"
+import { Container, Row, Col, Breadcrumb, Card, CardBody, Form, FormLabel, FormControl, FormCheck, Button } from "react-bootstrap"
 import NavComp from "../components/NavComp";
+import { useNavigate, useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { jwtDecode } from "jwt-decode";
 
 const OrderPage = () => {
+    const { id } = useParams();
+    const navigate = useNavigate();
+    const [data, setData] = useState([]);
+    const [dataPayment, setDataPayment] = useState([]);
+    const [user, setUser] = useState([]);
+    const [paymentId, setPaymentId] = useState('');
+
+    useEffect(() => {
+        getData();
+        getUser();
+        getPayment();
+    }, [])
+
+    const getData = async () => {
+        try {
+            const response = await axios.get('http://127.0.0.1:3000/api/game/' + id);
+            setData(await response.data.game);
+        } catch (error) {
+            console.log(error.message);
+        }
+    }
+
+    const getUser = () => {
+        const decode = jwtDecode(localStorage.getItem('token'));
+        setUser(decode);
+        // console.log(decode);
+    }
+
+    const getPayment = async () => {
+        try {
+            const response = await axios.get('http://127.0.0.1:3000/api/payment-method/');
+            setDataPayment(await response.data.payment);
+        } catch (error) {
+            console.log(error.message);
+        }
+    }
+
+    const postBilling = async (e) => {
+        e.preventDefault();
+        try {
+            const body = {
+                gameId: data._id,
+                userId: user.userId,
+                paymentId: paymentId
+            }
+            const config = {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('token')}`
+                }
+            }
+            const response = await axios.post('http://127.0.0.1:3000/api/billing', body, config);
+            console.log(response.data.message);
+            if (response.data.message == 'Terima Kasih, Silahkan lakukan pembayaran !')
+            {
+                navigate('/confirmpage')
+            }
+        } catch (error) {
+            console.log(error.message);
+        }
+    }
+
+    const handlerSelect = (e) => {
+        setPaymentId(e.target.value);
+    }
+
     return (
         <div>
             <NavComp/>
             <div id="order" className="mt-3">
                 <Container>
                     <Breadcrumb data-bs-theme="dark">
-                        <Breadcrumb.Item href="/DetailPage">Resident Evil Village</Breadcrumb.Item>
+                        <Breadcrumb.Item href={`/detailpage/${id}`}>{ data.name }</Breadcrumb.Item>
                         <Breadcrumb.Item active>Billing Information</Breadcrumb.Item>
                     </Breadcrumb>
 
@@ -19,60 +88,47 @@ const OrderPage = () => {
                             <Card className="mb-4" data-bs-theme="dark" bg="dark">
                                 <Row className="g-0">
                                     <Col md={4}>
-                                        <img src="../src/assets/image8.png" class="img-fluid" alt="..." style={{ width: '100%', borderRadius: '20px' }} />
+                                        <img src={`http://127.0.0.1:3000/images/${data.cover}`} className="img-fluid" alt="..." style={{ width: '100%', borderRadius: '20px' }} />
                                     </Col>
                                     <Col md={8}>
                                         <CardBody>
-                                            <h4 className="card-title"><b>Resident Evil Village</b></h4>
+                                            <h4 className="card-title"><b>{ data.name }</b></h4>
                                             <p className="card-text"><small className="text-secondary">Cost :</small>
-                                                <h5><b>IDR 200.000</b></h5>
+                                                <h5><b>IDR { data.price }</b></h5>
                                             </p>
                                             <hr />
-                                            <Row className="mt-4 mb-4">
-                                                <h5 className="text-secondary">Buyer Information</h5>
-                                                <Form>
-                                                    <Row>
-                                                        <Col lg={6}>
-                                                            <FormLabel for="Full Name">Full Name</FormLabel>
-                                                            <FormControl type="text" placeholder="Full Name"
-                                                                aria-label="Full Name" />
-                                                        </Col>
-                                                        <Col lg={6}>
-                                                            <FormLabel for="Phone Number">Phone Number</FormLabel>
-                                                            <FormControl type="text" placeholder="Phone Number"
-                                                                aria-label="Phone Number" />
-                                                        </Col>
-                                                    </Row>
-                                                </Form>
-                                            </Row>
-                                            <hr />
-                                            <h5 className="text-secondary">Payment Method</h5>
-                                            <Form>
-                                                {['radio'].map((type) => (
-                                                    <div key={`default-${type}`} className="mt-3 mb-3">
-                                                        <Form.Check
-                                                            type={type}
-                                                            id={`default`}
-                                                            label={`Gopay`}
-                                                        />
-                                                        <Form.Check
-                                                            type={type}
-                                                            id={`default`}
-                                                            label={`Ovo`}
-                                                        />
-                                                        <Form.Check
-                                                            type={type}
-                                                            id={`default`}
-                                                            label={`Indomaret`}
-                                                        />
-                                                    </div>
-                                                ))}
-                                            </Form>
+                                            <Form onSubmit={postBilling}>
+                                                <Row className="mt-4 mb-4">
+                                                    <h5 className="text-secondary">Buyer Information</h5>
+                                                        <Row>
+                                                            <Col lg={12}>
+                                                                <FormLabel htmlFor="Full Name">Username</FormLabel>
+                                                                <FormControl type="text" value={user.username}
+                                                                    aria-label="Full Name" readOnly/>
+                                                            </Col>
+                                                        </Row>
+                                                </Row>
+                                                <hr />
+                                                <h5 className="text-secondary">Payment Method</h5>
+                                                {/* <Row className="mb-5">
+                                                    <Col lg={12}> */}
+                                                        <Form.Select onChange={handlerSelect}>
+                                                            <option value="">Choose One</option>
+                                                            {
+                                                                dataPayment.map((data, index) => (
+                                                                    <option key={index} value={data._id}>{data.name}</option>
+                                                                ))
+                                                            }
+                                                        </Form.Select>
+                                                    {/* </Col>
+                                                </Row> */}
 
-                                            <a href="/ConfirmPage"
-                                                className="btn btn-outline-light mt-2 mb-1 w-100">Continue</a>
-                                            <a><small className="text-secondary">*Please ensure the data entered is correct before
-                                                clicking the 'continue' button.</small></a>
+                                                <Button type="submit" className="btn mt-2 mb-1 w-100">Continue</Button>
+                                                <a>
+                                                    <small className="text-secondary">*Please ensure the data entered is correct before
+                                                        clicking the 'continue' button.</small>
+                                                </a>
+                                            </Form>
                                         </CardBody>
                                     </Col>
                                 </Row>

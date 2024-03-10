@@ -115,14 +115,22 @@ module.exports = {
     },
     indexGame: async (req, res) =>
     {
-        const game = await Game.find();
-        res.status(200).json({ game });
+        try {
+            const game = await Game.find();
+            res.status(200).json({ game });
+        } catch (error) {
+            res.status(400).json({message: error.message});
+        }
     },
     showGame: async (req, res) =>
     {
-        const { id } = req.params;
-        const game = await Game.findOne({ _id: id });
-        res.status(200).json({ game });
+        try {
+            const { id } = req.params;
+            const game = await Game.findOne({ _id: id }).populate('specificationId');
+            res.status(200).json({ game });
+        } catch (error) {
+            res.status(400).json({message: error.message});
+        }
     },
     postUser: async(req, res) => {
         try {

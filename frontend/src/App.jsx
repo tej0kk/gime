@@ -23,10 +23,10 @@ function App() {
       <Route path='/aboutpage' Component={AboutPage} />
       <Route path='/newspage' Component={NewsPage} />
       <Route path='/loginpage' Component={LoginPage} />
-      <Route path='/detailpage' Component={DetailPage} />
+      <Route path='/detailpage/:id' Component={DetailPage} />
       <Route path='/salespage' Component={SalesPage} />
       <Route path='/signuppage' Component={SignupPage} />
-      <Route path='/orderpage' Component={OrderPage} />
+      <Route path='/orderpage/:id' Component={OrderPage} />
       <Route path='/confirmpage' Component={ConfirmPage} />
       <Route path='/scanpage' Component={ScanPage} />
       <Route path='/successpage' Component={SuccessPage} />

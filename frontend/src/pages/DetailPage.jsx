@@ -1,16 +1,44 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 // import components
 import NavbarComp from "../components/NavbarComp";
 import Footer from "../components/Footer";
 import { Nav, Container, Row, Col, Button, Modal, Form, FormLabel, ModalHeader } from "react-bootstrap";
+import { useNavigate, useParams } from "react-router-dom";
+import axios from "axios";
 
 
 const DetailPage = () => {
     const [show, setShow] = useState(false);
-
+    const navigate = useNavigate()
+    const [data, setData] = useState([]);
+    const [specification, setSpecification] = useState([]);
+    const { id } = useParams();
     const handleClose = () => setShow(false);
-    const handleShow = () => setShow(true);
+    const handleShow = () => {
+        if (localStorage.getItem('token')) {
+            navigate('/orderpage/' + id)
+        } else {
+            setShow(true);
+        }
+    }
+
+
+    useEffect(() => {
+        // localStorage.removeItem('token');
+        getData();
+    }, []);
+
+    const getData = async () => {
+        try {
+            const response = await axios.get('http://127.0.0.1:3000/api/game/' + id);
+            // console.log(response.data.game);
+            setData(await response.data.game);
+            setSpecification(await response.data.game.specificationId);
+        } catch (error) {
+            console.log(error.message);
+        }
+    }
 
     return (
         <div>
@@ -22,57 +50,49 @@ const DetailPage = () => {
                         <ol className="breadcrumb">
                             <li className="breadcrumb-item"><a href="/">Home</a></li>
                             <li className="breadcrumb-item active" aria-current="page">
-                                Resident Evil Village
+                                {data.name}
                             </li>
                         </ol>
                     </Nav>
 
                     <Row>
                         <Col lg={4}>
-                            <img src="../src/assets/image8.png" alt="" />
+                            <img src={`http://127.0.0.1:3000/images/${data.cover}`} alt="" />
                         </Col>
                         <Col lg={8}>
-                            <h1>Resident Evil Village</h1>
-                            <h2 className="cost mb-3">IDR 200.000</h2>
+                            <h1>{data.name}</h1>
+                            <h2 className="cost mb-3">IDR { data.price }</h2>
                             <h6>about game</h6>
                             <p>
-                                Lorem ipsum, dolor sit amet consectetur adipisicing elit. Fugit
-                                repellendus at officiis minus culpa maxime voluptate porro, vel
-                                similique ad architecto totam accusamus esse! Laudantium esse
-                                saepe dolorem maiores doloremque!
+                                { data.description }
                             </p>
                             <h6 className="mt-3">Spec Requirement</h6>
-                            <p><b>Reccommended :</b></p>
-                            <table>
-                                <tr>
-                                    <th>Os</th>
-                                    <th>Proccessor</th>
-                                    <th>Memory</th>
-                                    <th>Graphic</th>
-                                </tr>
-
-                                <tr>
-                                    <td>Windows 10</td>
-                                    <td>Intel Core i5 / AMD Ryzen 5</td>
-                                    <td>16 GB RAM</td>
-                                    <td>AMD Radeon RX 5700 / NVIDIA GeForce GTX 1070</td>
-                                </tr>
-                            </table>
-                            <p className="mt-3"><b>Minimum :</b></p>
-                            <table>
-                                <tr>
-                                    <th>Os</th>
-                                    <th>Proccessor</th>
-                                    <th>Memory</th>
-                                    <th>Graphic</th>
-                                </tr>
-                                <tr>
-                                    <td>Windows 10</td>
-                                    <td>Intel Core i3 / AMD Ryzen 3</td>
-                                    <td>8 GB RAM</td>
-                                    <td>Intel UHD Graphic 620 / AMD Radeon Graphic R9</td>
-                                </tr>
-                            </table>
+                            {
+                                specification.map((spec, index) => (
+                                    <div key={index}>
+                                        { (spec.category == 'req') && <p><b>Recommended : </b></p> }
+                                        { (spec.category == 'min') && <p><b>Minimum : </b></p> }
+                                        <table className="mb-3">
+                                            <thead>
+                                                <tr>
+                                                    <th>Os</th>
+                                                    <th>Proccessor</th>
+                                                    <th>Memory</th>
+                                                    <th>Graphic</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>{ spec.os }</td>
+                                                    <td>{ spec.processor }</td>
+                                                    <td>{ spec.memory } GB RAM</td>
+                                                    <td>{ spec.graphic }</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                ))
+                            }
 
                             <div className="trigger mt-5">
                                 <Row>
@@ -121,10 +141,9 @@ const DetailPage = () => {
                         <Col>
                             <h5>Game Trailer</h5>
                             <iframe style={{ borderRadius: '20px', width: '100%', height: '500px' }}
-                                src="https://www.youtube.com/embed/dRpXEc-EJow?si=nGEhQvwhV0hq0hlH" title="YouTube video player"
-                                frameborder="0"
+                                src={`https://youtube.be/embed/${data.trailer}`} title="YouTube video player"
                                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                                allowfullscreen>
+                                allowFullScreen>
                             </iframe>
                         </Col>
                     </Row>
